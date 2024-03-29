@@ -1,0 +1,251 @@
+hw4 pseudocode 
+
+#include <fstream>
+#include <sstream>
+#include <cmath>
+#include <algorithm>
+#include <vector>
+#include <map>
+#include <iostream>
+
+class User { 
+	public:
+		string Username
+		int Level of experience with C++
+		int Level of experience with gdb
+		int Level of experience in algorithms
+		vector<string> students you do NOT want to work with
+		vector<string> students you would like to work with 
+}
+
+class Team {
+	public:
+		int team_id
+		vector<User> members
+		int sum Level of experience with C++
+		int sum Level of experience with gdb
+		int sum Level of experience in algorithms
+		int num members
+		vector<string> combined students you do NOT want to work with
+		vector<string> combined students you would like to work with
+
+		void assignVals(){
+			for Users{
+				sum exp C++
+				sum exp gdb
+				sum exp algo
+				num member++
+				combine students to NOT work with
+				combine students pref to work with
+			}
+		}
+
+		std::ostream operator<<(std::ostream os&, Team team)
+}
+
+vector<User> readCSV(string filename){
+	vector<User> all_users // declare
+	ifstream and open file(filename)
+	string line
+
+	while(getline(file, line)){
+		stringstream ss(line)
+		User user
+		string cell
+		getline(ss,cell,',')
+		user Username = cell // repeat this for rest
+
+		all_users.push_back(user)
+	}
+	return all_users
+}
+
+vector<Team> distribute(vector<User> all_users, int member){
+	map<int, vector<User>> all_cpp
+	map<int, vector<User>> all_gdb
+	map<int, vector<User>> all_algo
+
+	int size = ceil(all_users.size() / member);
+
+	for(auto user: all_users){
+		// insert into each vectors depending on skill levels
+		all_cpp[user.cpp_exp].push_back(user)
+		all_gdb[user.gdb_exp].push_back(user)
+		all_algo[user.algo_exp].push_back(user)
+
+	}
+
+	vector<Team> teams;
+	for (int t=0; t<size; t++){
+		Team team;
+		teams[t] = team;
+	}
+
+
+	// first, make a pair to initialize team
+	for(int i=0; i<size; i++){
+		User user = all_users[i]
+		teams[I].team_id = I;
+		teams[I].student.push_back(user);
+		User chosen;
+
+		// find mate, join team, join teams, remove from pool
+
+		map<string, vector<int>> skill_needs = {{"cpp", {1,2,3}}, {"gdb", {1,2,3}}, {"algo", {1,2,3}}}
+		skill_needs["cpp"].pop(user.cpp_exp)
+		skill_needs["gdb"].pop(user.gdb_exp)
+		skill_needs["algo"].pop(user.algo_exp)
+
+		// outer join cpp
+		vector<User> cpp_pool = all_cpp[skill_needs["cpp"][0]]
+		cpp_pool.insert(all_cpp[skill_needs["cpp"][1]])
+
+		// outer join gdb
+		vector<User> gdb_pool = all_gdb[skill_needs["gdb"][0]]
+		gdb_pool.insert(all_gdb[skill_needs["gdb"][1]])
+
+		// outer join algo
+		vector<User> algo_pool = skill_needs["algo"][0]
+		algo_pool.insert(all_algo[skill_needs["algo"][1]])
+
+		// inner join everybody
+		vector<User> user_pool, final_pool
+		set_intersection(cpp_pool.begin(), cpp_pool.end(), gdb_pool.begin(), gdb_pool.end(), inserter(user_pool, user_pool.begin()));
+		set_intersection(algo_pool.begin(), algo_pool.end(), user_pool.begin(), user_pool.end(), inserter(final_pool, final_pool.begin()));
+
+		// remove the student you DO NOT want to work with
+		for (auto student: user.donotwant){
+			auto it = final_pool.find(student)
+			if (it != final_pool.end()){
+				final_pool.erase(it)
+			}
+		}
+
+		// prioritize student you would like to work with
+		for (auto student: user.dowant){
+			auto it = final_pool.find(student)
+			if (it != final_pool.end()){
+				teams[I].student.push_back(final_pool[it]);
+				chosen = final_pool[it];
+				break;
+			}
+
+		}
+
+		// randomly choose one student to pair with from the pool
+		if !chosen{
+			r = random number generator
+			teams[I].student.push_back(final_pool[r]);
+			chosen = final_pool[r]
+		}
+
+		// store potential team and pop from users
+		teams[I].assignVals()
+		all_cpp.pop(chosen)
+		all_gdb.pop(chosen)
+		all_algo.pop(chosen)
+	}
+
+
+	// second, finish up based on the assigned pairs and following teammates
+	int j=0,i;
+	while(all_users.size() > 0){
+		I = j%size;		
+
+		int ideal_stat = 2*(teams[I].num_mem + 1)
+		teams[I].team_id = i
+		User chosen;
+
+		// find mate, join team, join teams, remove from pool
+
+		// outer join cpp
+		cpp_pool = ideal_stat - teams[I].sumcpp
+		if(cpp_pool < 1):
+			cpp_pool = 1
+		else if(cpp_pool > 3):
+			cpp_pool = 3
+
+		// outer join gdb
+		gdb_pool = ideal_stat - teams[I].sumgdb
+		if(gdb_pool < 1):
+			gdb_pool = 1
+		else if(gdb_pool > 3):
+			gdb_pool = 3
+
+		// outer join algo
+		algo_pool = ideal_stat - teams[I].sumalgo
+		if(algo_pool < 1):
+			algo_pool = 1
+		else if(algo_pool > 3):
+			algo_pool = 3
+
+		// inner join everybody
+		vector<User> user_pool, final_pool
+		set_intersection(cpp_pool.begin(), cpp_pool.end(), gdb_pool.begin(), gdb_pool.end(), inserter(user_pool, user_pool.begin()));
+		set_intersection(algo_pool.begin(), algo_pool.end(), user_pool.begin(), user_pool.end(), inserter(final_pool, final_pool.begin()));
+
+		if !final_pool:
+			final_pool = all_users;
+
+		// remove the student you DO NOT want to work with
+		for (auto student: teams[I].donotwant){
+			auto it = final_pool.find(student)
+			if (it != final_pool.end()){
+				final_pool.erase(it)
+			}
+		}
+
+		// prioritize student you would like to work with
+		for (auto student: teams[I].dowant){
+			auto it = final_pool.find(student)
+			if (it != final_pool.end()){
+				teams[I].student.push_back(final_pool[it]);
+				chosen = final_pool[it];
+				break;
+			}
+
+		}
+
+		// randomly choose one student to pair with from the pool
+		if !chosen{
+			r = random number generator
+			teams[I].student.push_back(final_pool[r]);
+			chosen = final_pool[r]
+		}
+
+		// store potential team and pop from users
+		teams[I].assignVals()
+		all_cpp.pop(chosen)
+		all_gdb.pop(chosen)
+		all_algo.pop(chosen)
+
+		j++;
+	}
+
+	return teams;
+}
+
+std::ostream operator<<(ostream& os, Team team){
+	os<<"Names: ";
+	for(s: team.students){
+		os<<s.username
+	}
+	os<<"\nC++: "<<team.sumcpp<<" ; gdb: "<<team.sumgdb<<" ; Algo: "<<team.sumalgo<<"\n";
+	return os;
+}
+
+int main(){
+	vector<Team> roster1 = distribute(readCSV("roster/Assignment4 Roster Pref1.csv"), 3);
+	for(auto t: roster1):
+		std::cout<<t;
+
+	vector<Team> roster2 = distribute(readCSV("roster/Assignment4 Roster Pref2.csv"), 4);
+    for(auto t: roster2):
+    	std::cout<<t;
+
+    vector<Team> roster3 = distribute(readCSV("roster/Assignment4 Roster Pref3.csv"), 2);
+    for(auto t: roster3):
+    	std::cout<<t;
+
+	return 0;
+}
